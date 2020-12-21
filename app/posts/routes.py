@@ -4,8 +4,9 @@ from app.posts.model import Post
 from flask import jsonify, request
 
 
-@app.route('/posts', methods=['GET'])
+@app.route('/api/posts', methods=['GET'])
 def get_all_posts():
+    print(request.cookies)
     posts = Post.query.all()
     if posts:
         posts_list = [post.to_dict() for post in posts]
@@ -14,7 +15,7 @@ def get_all_posts():
         return jsonify([])
 
 
-@app.route('/posts/<post_id>', methods=['GET'])
+@app.route('/api/posts/<post_id>', methods=['GET'])
 def get_post(post_id):
     post = Post.query.filter(Post.id == post_id).first()
     if post:
@@ -24,7 +25,7 @@ def get_post(post_id):
         return jsonify({})
 
 
-@app.route('/users/<author_id>/posts', methods=['GET'])
+@app.route('/api/users/<author_id>/posts', methods=['GET'])
 def get_user_posts(author_id):
     posts = Post.query.filter(Post.author_id == author_id)
     if posts:
@@ -34,7 +35,7 @@ def get_user_posts(author_id):
         return jsonify([])
 
 
-@app.route('/posts', methods=['POST'])
+@app.route('/api/posts', methods=['POST'])
 def create_post():
     print(request.form)
     title = request.form.get('title')

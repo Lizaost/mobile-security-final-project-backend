@@ -5,7 +5,7 @@ from datetime import datetime
 from hashlib import sha256
 
 
-@app.route('/users', methods=['GET'])
+@app.route('/api/users', methods=['GET'])
 def get_all_users():
     users = User.query.all()
     if users:
@@ -15,7 +15,7 @@ def get_all_users():
         return jsonify([])
 
 
-@app.route('/users/<user_id>', methods=['GET'])
+@app.route('/api/users/<user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.filter(User.id == user_id).first()
     if user:
@@ -25,7 +25,7 @@ def get_user(user_id):
         return jsonify({})
 
 
-@app.route('/users', methods=['POST'])
+@app.route('/api/users', methods=['POST'])
 def create_user():
     username = request.form.get('username')
     first_name = request.form.get('first_name')
@@ -45,7 +45,7 @@ def create_user():
     return 'ok'
 
 
-@app.route('/users/<user_id>', methods=['PUT'])
+@app.route('/api/users/<user_id>', methods=['PUT'])
 def edit_user(user_id):
     user = User.query.filter(User.id == user_id).first()
     if request.form.get('username'):

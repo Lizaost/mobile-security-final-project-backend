@@ -4,7 +4,7 @@ from flask import jsonify, request
 from datetime import datetime
 
 
-@app.route('/comments/<comment_id>', methods=['GET'])
+@app.route('/api/comments/<comment_id>', methods=['GET'])
 def get_comment(comment_id):
     comment = Comment.query.filter(Comment.id == comment_id).first()
     if comment:
@@ -14,7 +14,7 @@ def get_comment(comment_id):
         return jsonify({})
 
 
-@app.route('/posts/<post_id>/comments', methods=['GET'])
+@app.route('/api/posts/<post_id>/comments', methods=['GET'])
 def get_post_comments(post_id):
     comments = Comment.query.filter(Comment.post_id == post_id)
     if comments:
@@ -24,7 +24,7 @@ def get_post_comments(post_id):
         return jsonify([])
 
 
-@app.route('/comments', methods=['POST'])
+@app.route('/api/comments', methods=['POST'])
 def create_comment():
     author_id = 40  # TODO: get user_id from token
     text = request.form.get('text')
