@@ -6,10 +6,11 @@ from flask import jsonify, request
 
 @app.route('/api/posts', methods=['GET'])
 def get_all_posts():
-    print(request.cookies)
+    # print(request.cookies)
     posts = Post.query.all()
     if posts:
         posts_list = [post.to_dict() for post in posts]
+        print(posts_list)
         return jsonify(posts_list)
     else:
         return jsonify([])

@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 
 app = Flask(__name__)
 CORS(app,
-     expose_headers=['Access-Control-Allow-Credentials'],
+     expose_headers=['Access-Control-Allow-Credentials', 'Access-Control-Allow-Origin'],
      supports_credentials=True,
      origins='https://127.0.0.1:3000')
 app.config.from_object(Config)
@@ -15,12 +15,9 @@ db = SQLAlchemy(app)
 from app.posts.model import Post
 from app.users.model import User
 from app.comments.model import Comment
+from app.auth.blacklist_token_model import BlacklistToken
 
 print(db)
 migrate = Migrate(app, db, ssl_context='adhoc')
 
 from app import routes
-
-if __name__ == "__main__":
-    print('---')
-    app.run(ssl_context='adhoc')

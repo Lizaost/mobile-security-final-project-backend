@@ -70,3 +70,4 @@ def get_test_cookies():
 from app.users.routes import *
 from app.comments.routes import *
 from app.posts.routes import *
+from app.auth.routes import *
