@@ -1,13 +1,60 @@
 import hashlib
 from flask import request, make_response, jsonify
 from app import User, db
-from app.auth.tokens_utils import encode_auth_token, decode_auth_token
+from app.auth.tokens_utils import encode_auth_token, decode_auth_token, check_blacklist
 from app.auth.blacklist_token_model import BlacklistToken
 
 
 def check_login_status():
     print('Checking login status')
-    return True
+    auth_token = request.cookies.get('accessToken')
+    if auth_token:
+        resp = decode_auth_token(auth_token)
+        if not isinstance(resp, str):
+            if not check_blacklist(auth_token):
+                try:
+                    responseObject = {
+                        'status': 'success',
+                        'isUserLoggedIn': True,
+                    }
+                    resp = make_response(jsonify(responseObject))
+                    return resp, 200
+                except Exception as e:
+                    responseObject = {
+                        'status': 'fail',
+                        'isUserLoggedIn': False,
+                        'message': e
+                    }
+                    return make_response(jsonify(responseObject)), 200
+            else:
+                try:
+                    responseObject = {
+                        'status': 'success',
+                        'isUserLoggedIn': False,
+                    }
+                    resp = make_response(jsonify(responseObject))
+                    return resp, 200
+                except Exception as e:
+                    responseObject = {
+                        'status': 'fail',
+                        'isUserLoggedIn': False,
+                        'message': e
+                    }
+                    return make_response(jsonify(responseObject)), 200
+        else:
+            responseObject = {
+                'status': 'fail',
+                'isUserLoggedIn': False,
+                'message': resp
+            }
+            return make_response(jsonify(responseObject)), 401
+    else:
+        responseObject = {
+            'status': 'fail',
+            'isUserLoggedIn': False,
+            'message': 'Provide a valid auth token.'
+        }
+        return make_response(jsonify(responseObject)), 403
 
 
 def login(email, password):
@@ -25,6 +72,7 @@ def login(email, password):
             responseObject = {
                 'status': 'success',
                 'message': 'Successfully logged in.',
+                'user_id': user.id,
                 'auth_token': auth_token.decode()
             }
             resp = make_response(jsonify(responseObject))
@@ -66,10 +114,12 @@ def register(username, first_name, last_name, email, password, status):
             responseObject = {
                 'status': 'success',
                 'message': 'Successfully registered.',
+                'user_id': user.id,
                 'auth_token': auth_token.decode()
             }
             resp = make_response(jsonify(responseObject))
             resp.set_cookie('accessToken', auth_token.decode())
+            # resp.set_cookie('accessToken', auth_token.decode(), httponly=True)
             return resp, 201
         except Exception as e:
             responseObject = {
@@ -133,13 +183,12 @@ def logout():
 def get_current_user_profile():
     print('Getting current user profile')
     # get the auth token
-    auth_header = request.headers.get('Authorization')
-    if auth_header:
-        auth_token = auth_header.split(" ")[1]
-    else:
-        auth_token = ''
+    print(request.cookies)
+    auth_token = request.cookies.get('accessToken')
     if auth_token:
         resp = decode_auth_token(auth_token)
+        print('---')
+        print(resp)
         if not isinstance(resp, str):
             user = User.query.filter_by(id=resp).first()
             responseObject = {
@@ -147,8 +196,10 @@ def get_current_user_profile():
                 'data': {
                     'user_id': user.id,
                     'email': user.email,
-                    'admin': user.admin,
-                    'registered_on': user.registered_on
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'status': user.status,
+                    'username': user.username,
                 }
             }
             return make_response(jsonify(responseObject)), 200

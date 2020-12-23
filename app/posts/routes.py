@@ -1,5 +1,6 @@
 from datetime import datetime
 from app import app, db
+from app.auth.tokens_utils import decode_auth_token
 from app.posts.model import Post
 from flask import jsonify, request
 
@@ -38,12 +39,19 @@ def get_user_posts(author_id):
 
 @app.route('/api/posts', methods=['POST'])
 def create_post():
-    print(request.form)
-    title = request.form.get('title')
-    text = request.form.get('text')
-    author_id = 39  # TODO: get it from access token
+    auth_token = request.cookies.get('accessToken')
+    author_id = None
+    if auth_token:
+        resp = decode_auth_token(auth_token)
+        if not isinstance(resp, str):
+            author_id = resp
+        else:
+            raise Exception('Unauthorized user')
+    data = request.json
+    title = data['title']
+    text = data['text']
     published_at = datetime.now()
     post = Post(title=title, text=text, author_id=author_id, published_at=published_at)
     db.session.add(post)
     db.session.commit()
-    return 'ok'
+    return jsonify({'status': 'success', 'user_id': author_id})

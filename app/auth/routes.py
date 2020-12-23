@@ -4,7 +4,7 @@ from app import app, db
 import app.auth.service as s
 
 
-@app.route('/api/auth/check', methods=['GET'])
+@app.route('/api/auth/check', methods=['POST'])
 def check_login_status():
     print('Checking login status')
     return s.check_login_status()

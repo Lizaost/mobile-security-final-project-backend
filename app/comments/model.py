@@ -11,12 +11,13 @@ class Comment(db.Model):
     published_at = db.Column(db.DateTime)
 
     def __repr__(self):
-        return '<User id: {}, text: {}, author_id: {}>'.format(self.id, self.text, self.author_id)
+        return '<Comment id: {}, text: {}, author_id: {}>'.format(self.id, self.text, self.author_id)
 
     def to_dict(self):
         comment = {
             'id': self.id,
-            'author': self.author.to_dict(),
+            'author': self.author.to_dict() if self.author else None,
+            'author_id': self.author_id,
             'post_id': self.post_id,
             'text': self.text,
             'published_at': self.published_at,
