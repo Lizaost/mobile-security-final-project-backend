@@ -16,6 +16,7 @@ from app.posts.model import Post
 from app.users.model import User
 from app.comments.model import Comment
 from app.auth.blacklist_token_model import BlacklistToken
+from app.auth.refresh_token_model import RefreshToken
 
 print(db)
 migrate = Migrate(app, db, ssl_context='adhoc')

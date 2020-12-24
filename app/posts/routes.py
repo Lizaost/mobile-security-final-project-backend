@@ -7,7 +7,6 @@ from flask import jsonify, request
 
 @app.route('/api/posts', methods=['GET'])
 def get_all_posts():
-    # print(request.cookies)
     posts = Post.query.all()
     if posts:
         posts_list = [post.to_dict() for post in posts]
@@ -39,7 +38,8 @@ def get_user_posts(author_id):
 
 @app.route('/api/posts', methods=['POST'])
 def create_post():
-    auth_token = request.cookies.get('accessToken')
+    # auth_token = request.cookies.get('accessToken')
+    auth_token = request.json['accessToken']
     author_id = None
     if auth_token:
         resp = decode_auth_token(auth_token)

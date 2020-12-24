@@ -10,6 +10,14 @@ def check_login_status():
     return s.check_login_status()
 
 
+@app.route('/api/auth/refresh', methods=['POST'])
+def refresh_access_token():
+    print('Refreshing access token')
+    refresh_token = request.cookies.get('refreshToken')
+    user_agent = request.user_agent.string
+    return s.refresh_access_token(refresh_token, user_agent)
+
+
 @app.route('/api/auth/login', methods=['POST'])
 def login():
     print('Logging in')

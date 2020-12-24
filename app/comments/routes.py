@@ -27,7 +27,8 @@ def get_post_comments(post_id):
 
 @app.route('/api/comments', methods=['POST'])
 def create_comment():
-    auth_token = request.cookies.get('accessToken')
+    # auth_token = request.cookies.get('accessToken')
+    auth_token = request.json['accessToken']
     author_id = None
     print(auth_token)
     if auth_token:
