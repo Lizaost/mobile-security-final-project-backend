@@ -4,8 +4,10 @@ from flask import jsonify, request
 from datetime import datetime
 from hashlib import sha256
 
+prefix = '/api/users'
 
-@app.route('/api/users', methods=['GET'])
+
+@app.route(prefix + '', methods=['GET'])
 def get_all_users():
     users = User.query.all()
     if users:
@@ -15,7 +17,7 @@ def get_all_users():
         return jsonify([])
 
 
-@app.route('/api/users/<user_id>', methods=['GET'])
+@app.route(prefix + '/<user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.filter(User.id == user_id).first()
     if user:

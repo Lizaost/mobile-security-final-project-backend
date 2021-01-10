@@ -9,19 +9,10 @@ from app.posts.model import Post
 from app.comments.model import Comment
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    print('"' + path + '"')
-    print(app.static_folder + '\\' + path)
-    full_path = (app.static_folder + '\\' + path).replace('\\app', '')
-    if path != "" and os.path.exists(full_path):
-        print('Have this path')
-        return send_from_directory(app.static_folder.replace('\\app', ''), path)
-    else:
-        print('No such path')
-        print(send_from_directory(app.static_folder.replace('\\app', ''), 'index.html'))
-        return send_from_directory(app.static_folder.replace('\\app', ''), 'index.html')
+@app.route('/')
+@app.route('/index')
+def serve():
+    return 'Hello from backend'
 
 
 @app.route('/init')
